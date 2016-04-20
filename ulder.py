@@ -16,22 +16,22 @@ class Grid():
                  'y', 'z']
         
         grid = ''
+        row = 'uldr|'
+        for item in range(0, self.x):
+            row += ' ' + str(item) + ' |'
+            
+        grid += row + '\n'        
+
         for lis in range(0, len(self.layout)):
             grid += '----+' + ('---+' * (self.x)) + '\n'
             
-            num = str(self.y - lis)
+            num = str(lis)
             
             grid += '{0:^4}|'.format(num) + ('   |' * self.x) + '\n'
                 
             
         grid += '----+' + ('---+' * (self.x)) + '\n'
-        
-        row = 'uldr|'
-        
-        for item in range(0, self.x):
-            row += ' ' + alpha[item] + ' |'
-            
-        grid += row + '\n'
+
                     
         return grid
     
@@ -82,9 +82,7 @@ class Grid():
             if error == False:
                     
                 commands[char]()
-                
-                print(self.current)
-                
+                                
                 if not self.is_valid():
                     error = True
                     
@@ -93,42 +91,55 @@ class Grid():
             
             
         if error == False:
-            return 'cool'
+            return (True, self.current)
         else:
-            return 'summon satan'
+            return (False, self.current)
         
-            
-def uldr():
-    start = (0,0)
-    quit = False
+
+def problem(start, end):
     
-    print()
+    print('\nYou start at ' + str(start) + ' and you must reach ' + str(end) + '.\n')
     grid = Grid(3, 3, start)
     print(grid)
     
-    while quit == False:
-        prompt = input('> ')
+    prompt = input('> ')
+    
+    error = False
+    if prompt == 'grid':
+        print(grid)
         
-        error = False
-        if prompt == 'grid':
-            print(grid)
+    else:
+        
+        options = ['u','l','d','r','grid']
+        
+        for i in prompt:
+            if i not in options:
+                error = True
+        
+        if error == False:
+            finish = grid.run(prompt)[1]
+            
+            grid.current = start
             
         else:
-            
-            options = ['u','l','d','r','grid']
-            
-            for i in prompt:
-                if i not in options:
-                    error = True
-            
-            if error == False:
-                print(grid.run(prompt))
-                grid.current = start
-                
-            else:
-                print('error in input u = up, l = left, d = down, r = right')
+            print('error in input u = up, l = left, d = down, r = right')
+    
+    if error == False and finish == end:
+        return True
         
-
-
+    else:
+        return False
+        
+    
+def uldr():
+    
+    frage = problem((0,0),(2,2))
+    
+    while frage == False:
+        print('\nBad luck. Try again')
+        frage = problem((0,0),(2,2))
+        
+    print('congrats')
+    
+    
 uldr()
-        
