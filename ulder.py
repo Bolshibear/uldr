@@ -1,12 +1,37 @@
 
 class Grid():
     
-    def __init__(self,x,y, start):
+    def __init__(self,x,y, start, end, specials):
         self.x = x
         self.y = y
         self.layout = [[' '] * x] * y
         
         self.current = start
+        self.start = start
+        self.end = end
+        
+        self.teles = [] # vertices that will teleport you (vertex, dest_state)
+        self.fails = [] # vertices that will cause you to fail outright
+        self.comps = [] # vertices that are compulsary to include
+        
+        self.find_specials(specials)
+        
+    
+    def reset(self):
+        self.current = self.start
+        
+        
+    def find_specials(self, specials):
+        
+        for vertex, attributes, dest in specials:
+            if 'fail' in attributes:
+                self.fails.append(vertex)
+                
+            if 'tele' in attributes:
+                self.teles.append((vertex, dest)) 
+                
+            if 'comp' in attributes:
+                self.comps.append(vertex)      
         
         
     def __str__(self):
@@ -31,45 +56,69 @@ class Grid():
                 
             
         grid += '----+' + ('---+' * (self.x)) + '\n'
-
-                    
+        
         return grid
+    
+    def intro(self):
+        briefing = '\nYou start at {0} and you must reach {1}.\n'.\
+            format(str(self.start), str(self.end))
+        
+        briefing += '\n'    
+        
+        for vertex  in self.comps:
+            briefing += 'You must pass through ' + str(vertex) + '\n'
+            
+        briefing += '\n'        
+        
+        for vertex  in self.fails:
+            briefing += str(vertex) + ' is blocked.\n'
+            
+        briefing += '\n'
+            
+        for vertex, dest in self.teles:
+            briefing += 'Going through ' + str(vertex) + ' will teleport you to '\
+                + str(dest) + '\n'
+        
+        return briefing
+
     
     
     def up(self):
-        self.current = (self.current[0], self.current[1] - 1)
+        return (self.current[0] - 1, self.current[1])
         
         
     def left(self):
-        self.current = (self.current[0] - 1, self.current[1])
+        return (self.current[0], self.current[1] - 1)
         
         
     def down(self):
-        self.current = (self.current[0], self.current[1] + 1)
+        return (self.current[0] + 1, self.current[1])
             
             
     def right(self): 
-        self.current = (self.current[0] + 1, self.current[1])
+        return (self.current[0], self.current[1] + 1)
 
-    def is_valid(self):
-        valid = True
-        pos = self.current
+    def is_valid(self, next_vertex):
+        '''Checks if a move to next_vertex is available'''
         
-        if pos[0] >= self.x or pos[0] < 0:
-            print('failes')
-            valid = False
+        pos = next_vertex
         
-        if pos[1] >= self.y or pos[1] < 0:
-            print('failes')
-            valid = False
+        if pos in self.fails:
+            print('Used banned vertex')
+            return False
         
-        return valid
+        elif pos[0] >= self.y or pos[0] < 0:
+            return False
+        
+        elif pos[1] >= self.x or pos[1] < 0:
+            return False
+        
+        else:
+            return True
             
-        
         
     def run(self, inpt):
         error = False
-        counter = 0
         
         commands = {'u': self.up,
                     'l': self.left,
@@ -79,52 +128,49 @@ class Grid():
                     }
         
         for char in inpt:
+            options = ['u','l','d','r']
+            if char not in options:
+                print('error in input u = up, l = left, d = down, r = right')
+                error = True
+                break
+            
             if error == False:
                     
-                commands[char]()
+                next_vertex = commands[char]()
                                 
-                if not self.is_valid():
+                if self.is_valid(next_vertex):
+                    self.current = next_vertex
+                    
+                else:
                     error = True
                     
             else:
                 break
             
-            
-        if error == False:
+        if error != True:
             return (True, self.current)
+        
         else:
             return (False, self.current)
         
-
-def problem(start, end):
+        
+def problem(start, end, specials):
     
-    print('\nYou start at ' + str(start) + ' and you must reach ' + str(end) + '.\n')
-    grid = Grid(3, 3, start)
+    grid = Grid(3, 3, start, end, specials)
+    print(grid.intro())
     print(grid)
     
     prompt = input('> ')
     
-    error = False
-    if prompt == 'grid':
-        print(grid)
-        
-    else:
-        
-        options = ['u','l','d','r','grid']
-        
-        for i in prompt:
-            if i not in options:
-                error = True
-        
-        if error == False:
-            finish = grid.run(prompt)[1]
-            
-            grid.current = start
-            
-        else:
-            print('error in input u = up, l = left, d = down, r = right')
+    finish = grid.run(prompt)[1]
+    grid.reset()
     
-    if error == False and finish == end:
+    while finish != end:
+        prompt = input('> ')
+        finish = grid.run(prompt)[1]   
+        grid.reset()
+        
+    if finish == end:
         return True
         
     else:
@@ -132,14 +178,20 @@ def problem(start, end):
         
     
 def uldr():
+    specials = [((0,1), ['fail'],()), 
+                ((1,0), ['comp'],()),
+                ((2,0), ['fail'],()),
+                ((1,2), ['tele'],(0,0))
+                ]
     
-    frage = problem((0,0),(2,2))
+    
+    frage = problem((0,0),(2,2), specials)
     
     while frage == False:
         print('\nBad luck. Try again')
-        frage = problem((0,0),(2,2))
+        frage = problem((0,0),(2,2), specials)
         
-    print('congrats')
+    print('Congratulations, you made it through the puzzle.')
     
     
 uldr()
