@@ -1,10 +1,9 @@
-
 class Grid():
     
-    def __init__(self,x,y, start, end, specials):
-        self.x = x
-        self.y = y
-        self.layout = [[' '] * x] * y
+    def __init__(self, size, start, end, specials):
+        self.x = size[0]
+        self.y = size[1]
+        self.layout = [[' '] * self.x] * self.y
         
         self.current = start
         self.start = start
@@ -16,11 +15,12 @@ class Grid():
         
         self.find_specials(specials)
         
-        self.error = False
+        self.passed = True
         
     
     def reset(self):
         self.current = self.start
+        self.passed = True
         
         
     def find_specials(self, specials):
@@ -44,12 +44,15 @@ class Grid():
         
         grid = ''
         row = 'uldr|'
-        for item in range(0, self.x):
+        x_row = range(0, self.x)
+        y_row = range(0, len(self.layout))
+        
+        for item in x_row:
             row += ' ' + str(item) + ' |'
             
         grid += row + '\n'        
 
-        for lis in range(0, len(self.layout)):
+        for lis in y_row:
             grid += '----+' + ('---+' * (self.x)) + '\n'
             
             num = str(lis)
@@ -79,7 +82,8 @@ class Grid():
         briefing += '\n'
             
         for vertex, dest in self.teles:
-            briefing += 'Going through ' + str(vertex) + ' will teleport you to '\
+            briefing += 'Going through ' + str(vertex) + ' will teleport \
+you to '\
                 + str(dest) + '\n'
         
         return briefing
@@ -107,11 +111,7 @@ class Grid():
         
         pos = next_vertex
         
-        if pos in self.fails:
-            print('\nYou passed throught a blocked vertex. Try again.\n')
-            return False
-        
-        elif pos[0] >= self.y or pos[0] < 0:
+        if pos[0] >= self.y or pos[0] < 0:
             return False
         
         elif pos[1] >= self.x or pos[1] < 0:
@@ -128,17 +128,16 @@ class Grid():
                     'l': self.left,
                     'd': self.down,
                     'r': self.right,
-                    'grid': self.__str__,
                     }
         
         for char in inpt:
             options = ['u','l','d','r']
             if char not in options:
-                print('error in input u = up, l = left, d = down, r = right')
-                self.error = True
+                print('\nerror in input u = up, l = left, d = down, r = right')
+                self.passed = False
                 break
             
-            if self.error == False:
+            if self.passed == True:
                     
                 next_vertex = commands[char]()
                                 
@@ -147,56 +146,23 @@ class Grid():
                     visited.append(self.current)
                     
                 else:
-                    self.error = True
+                    self.passed = False
                     
             else:
                 break
             
-        if self.error != True:
-            return (True, self.current)
-        
-        else:
-            return (False, self.current)
-        
-        
-def problem(start, end, specials):
-    
-    grid = Grid(3, 3, start, end, specials)
-    print(grid.intro())
-    print(grid)
-    
-    prompt = input('> ')
-    
-    finish = grid.run(prompt)[1]
-    grid.reset()
-    
-    while finish != end:
-        prompt = input('> ')
-        finish = grid.run(prompt)[1]   
-        grid.reset()
-        
-    if finish == end:
-        return True
-        
-    else:
-        return False
-        
-    
-def uldr():
-    specials = [((0,1), ['fail'],()), 
-                ((2,1), ['comp'],()),
-                ((2,0), ['fail'],()),
-                ((1,2), ['tele'],(0,2))
-                ]
-    
-    
-    frage = problem((0,0),(2,2), specials)
-    
-    while frage == False:
-        print('\nBad luck. Try again')
-        frage = problem((0,0),(2,2), specials)
-        
-    print('\nCongratulations, you made it through the puzzle.\n')
-    
-    
-uldr()
+        if self.current != self.end and self.passed == True:
+            print('\nYou did not finish on the required end vertex.')
+            self.passed = False        
+            
+        for i in self.comps:
+            if i  not in visited and self.passed == True:
+                print('\nNot all the compulsary vertices were visited.')
+                self.passed = False
+                
+        for i in self.fails:
+            if i in visited and self.passed == True:
+                print('\nYou passed through a blocked vertex.')
+                self.passed = False
+            
+        return (self.passed, self.current)
