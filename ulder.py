@@ -16,6 +16,8 @@ class Grid():
         
         self.find_specials(specials)
         
+        self.error = False
+        
     
     def reset(self):
         self.current = self.start
@@ -59,6 +61,7 @@ class Grid():
         
         return grid
     
+    
     def intro(self):
         briefing = '\nYou start at {0} and you must reach {1}.\n'.\
             format(str(self.start), str(self.end))
@@ -97,6 +100,7 @@ class Grid():
             
     def right(self): 
         return (self.current[0], self.current[1] + 1)
+    
 
     def is_valid(self, next_vertex):
         '''Checks if a move to next_vertex is available'''
@@ -104,7 +108,7 @@ class Grid():
         pos = next_vertex
         
         if pos in self.fails:
-            print('Used banned vertex')
+            print('\nYou passed throught a blocked vertex. Try again.\n')
             return False
         
         elif pos[0] >= self.y or pos[0] < 0:
@@ -118,7 +122,7 @@ class Grid():
             
         
     def run(self, inpt):
-        error = False
+        visited = [self.current]
         
         commands = {'u': self.up,
                     'l': self.left,
@@ -131,23 +135,24 @@ class Grid():
             options = ['u','l','d','r']
             if char not in options:
                 print('error in input u = up, l = left, d = down, r = right')
-                error = True
+                self.error = True
                 break
             
-            if error == False:
+            if self.error == False:
                     
                 next_vertex = commands[char]()
                                 
                 if self.is_valid(next_vertex):
                     self.current = next_vertex
+                    visited.append(self.current)
                     
                 else:
-                    error = True
+                    self.error = True
                     
             else:
                 break
             
-        if error != True:
+        if self.error != True:
             return (True, self.current)
         
         else:
@@ -179,9 +184,9 @@ def problem(start, end, specials):
     
 def uldr():
     specials = [((0,1), ['fail'],()), 
-                ((1,0), ['comp'],()),
+                ((2,1), ['comp'],()),
                 ((2,0), ['fail'],()),
-                ((1,2), ['tele'],(0,0))
+                ((1,2), ['tele'],(0,2))
                 ]
     
     
@@ -191,7 +196,7 @@ def uldr():
         print('\nBad luck. Try again')
         frage = problem((0,0),(2,2), specials)
         
-    print('Congratulations, you made it through the puzzle.')
+    print('\nCongratulations, you made it through the puzzle.\n')
     
     
 uldr()
