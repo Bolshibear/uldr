@@ -40,8 +40,8 @@ def level_generator():
     '''
     Currently Just returns test size, start, end and specials
     
-    TO DO: Implement randomized level maker. Should check if problem is 
-    solvable first'''
+    TO DO: Implement randomized level maker. It should check if the random
+    problem is solvable first'''
     
     size = (4,3)
     start = (0,0)
@@ -51,6 +51,27 @@ def level_generator():
                 ((2,1), ['comp'],()),
                 ((2,0), ['fail'],()),
                 ((1,2), ['tele'],(0,2))
+                ]    
+    
+    return [size, start, end, specials]
+
+
+def level_test():
+    '''
+    Currently Just returns test size, start, end and specials
+    
+    TO DO: Implement randomized level maker. It should check if the random
+    problem is solvable first'''
+    
+    size = (8, 3)
+    start = (0,0)
+    end = (2,7)
+    
+    specials = [((0,7), ['fail'],()), 
+                ((1,1), ['fail'],()),
+                ((0,2), ['fail'],()),
+                ((1,6), ['comp'],()),
+                ((2,2), ['tele'],(1,7))
                 ]    
     
     return [size, start, end, specials]
@@ -76,7 +97,7 @@ def uldr():
     
     for i in range(1, 11):
         print('\n---------------- Level {} ----------------\n'.format(i))
-        level = level_generator()
+        level = level_test()
         
         frage = problem(level[0], level[1], level[2], level[3])
         

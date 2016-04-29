@@ -160,6 +160,11 @@ you to '\
                     }
         
         for char in inpt:
+            
+            for i in self.teles:
+                if i[0] == self.current:
+                    self.current = i[1]  
+                    
             options = ['u','l','d','r']
             if char not in options:
                 print('\nerror in input u = up, l = left, d = down, r = right')
@@ -178,7 +183,7 @@ you to '\
                     self.passed = False
                     
             else:
-                break
+                break   
             
         if self.current != self.end and self.passed == True:
             print('\nYou did not finish on the required end vertex.')
@@ -193,5 +198,6 @@ you to '\
             if i in visited and self.passed == True:
                 print('\nYou passed through a blocked vertex.')
                 self.passed = False
+                
             
         return (self.passed, self.current)
