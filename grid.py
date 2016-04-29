@@ -1,9 +1,14 @@
 class Grid():
     
     def __init__(self, size, start, end, specials):
+        '''
+        Implements starting variables and makes them accessable from the class.
+        It builds teles, comps anf fails from fins_spcials()'''
+        
         self.x = size[0]
         self.y = size[1]
         self.layout = [[' '] * self.x] * self.y
+        self.specials = specials
         
         self.current = start
         self.start = start
@@ -13,19 +18,25 @@ class Grid():
         self.fails = [] # vertices that will cause you to fail outright
         self.comps = [] # vertices that are compulsary to include
         
-        self.find_specials(specials)
+        self.find_specials()
         
         self.passed = True
         
     
     def reset(self):
+        '''
+        Resets current vertex to start and the passed bool to True'''
+        
         self.current = self.start
         self.passed = True
         
         
-    def find_specials(self, specials):
+    def find_specials(self):
+        '''
+        Checks specials in self.specials and splits them into 'fail', 'tele'
+        and 'comp' and appends them to self.fails, self.teles and self.comps.'''
         
-        for vertex, attributes, dest in specials:
+        for vertex, attributes, dest in self.specials:
             if 'fail' in attributes:
                 self.fails.append(vertex)
                 
@@ -37,6 +48,9 @@ class Grid():
         
         
     def __str__(self):
+        '''
+        Returns a graphical representation of the grid, albeit without special
+        vertices'''
         
         alpha = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', \
                  'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', \
@@ -66,6 +80,11 @@ class Grid():
     
     
     def intro(self):
+        '''
+        Returns the introduction, letting the player know which vertices they
+        can't pass through, they must pass through and which ones will teleport
+        them to another vertex'''
+        
         briefing = '\nYou start at {0} and you must reach {1}.\n'.\
             format(str(self.start), str(self.end))
         
@@ -89,25 +108,28 @@ you to '\
         return briefing
 
     
-    
     def up(self):
+        '''Moves self.current up a row'''
         return (self.current[0] - 1, self.current[1])
         
         
     def left(self):
+        '''Moves self.current left'''
         return (self.current[0], self.current[1] - 1)
         
         
     def down(self):
+        '''Moves self.current down a row'''
         return (self.current[0] + 1, self.current[1])
             
             
-    def right(self): 
+    def right(self):
+        '''Moves self.current right'''
         return (self.current[0], self.current[1] + 1)
     
 
     def is_valid(self, next_vertex):
-        '''Checks if a move to next_vertex is available'''
+        '''Checks if a move to next_vertex is possible on the grid.'''
         
         pos = next_vertex
         
@@ -122,6 +144,13 @@ you to '\
             
         
     def run(self, inpt):
+        '''
+        Runs the user input across the grid and returns if it passed the level
+        or not. It checks: a) The input lands on the end vertex
+                           b) The input doesn't pass through blocked vertices
+                           c) The input passes through the compulsary vertices.
+        '''
+        
         visited = [self.current]
         
         commands = {'u': self.up,
