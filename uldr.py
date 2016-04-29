@@ -76,6 +76,27 @@ def level_test():
     
     return [size, start, end, specials]
 
+
+def level_test_2():
+    '''
+    Currently Just returns test size, start, end and specials
+    
+    TO DO: Implement randomized level maker. It should check if the random
+    problem is solvable first'''
+    
+    size = (9, 6)
+    start = (0,0)
+    end = (4,12)
+    
+    specials = [((0,7), ['fail'],()), 
+                ((1,1), ['fail'],()),
+                ((0,2), ['fail'],()),
+                ((1,6), ['comp'],()),
+                ((2,2), ['tele'],(1,7))
+                ]    
+    
+    return [size, start, end, specials]
+
 def clear_page():
     '''
     Checks if uldr is being run in a terminal of ide. If terminal It clears
@@ -95,18 +116,22 @@ def uldr():
     
     clear_page()
     
-    for i in range(1, 11):
-        print('\n---------------- Level {} ----------------\n'.format(i))
-        level = level_test()
+    levels = [level_generator(), level_test(), level_test_2()]
+    
+    counter = 1
+    for level in levels:
+        print('\n---------------- Level {} ----------------\n'.format(counter))
         
-        frage = problem(level[0], level[1], level[2], level[3])
+        runtime = problem(level[0], level[1], level[2], level[3])
         
-        if frage == 'quit':
+        if runtime == 'quit':
             clear_page()
             break
         
         time.sleep(1)
         clear_page()
+        
+        counter += 1
       
 
 uldr()

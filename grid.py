@@ -183,12 +183,12 @@ you to '\
                     self.passed = False
                     
             else:
-                break   
-            
+                break 
+                        
         if self.current != self.end and self.passed == True:
             print('\nYou did not finish on the required end vertex.')
             self.passed = False        
-            
+                    
         for i in self.comps:
             if i  not in visited and self.passed == True:
                 print('\nNot all the compulsary vertices were visited.')
