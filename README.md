@@ -10,8 +10,8 @@ The only letters you can enter are u, l, d and r. (up, left, down, right)
 
 ### Screenshots
 
-![alt text](https://github.com/Jeopardy/uldr/images/level_1.png "level 1")
+![alt text](https://raw.githubusercontent.com/Bolshibear/uldr/master/images/level_1.png "level 1")
 
-![alt text](https://github.com/Jeopardy/uldr/images/level_2.png "level 2")
+![alt text](https://raw.githubusercontent.com/Bolshibear/uldr/master/images/level_2.png "level 2")
 
-![alt text](https://github.com/Jeopardy/uldr/images/level_3.png "level32")
+![alt text](https://raw.githubusercontent.com/Bolshibear/uldr/master/images/level_3.png "level 3")
