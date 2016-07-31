@@ -106,6 +106,11 @@ def clear_page():
         os.system('clear')
 
 
+def menu():
+    print('\n' * 6)
+    print('Play')
+    print('Help')
+    print('Quit')
     
     
 def uldr():
@@ -115,6 +120,8 @@ def uldr():
     after every level and runs clear_page().'''
     
     clear_page()
+    
+    menu()
     
     levels = [level_generator(), level_test(), level_test_2()]
     
